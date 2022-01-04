@@ -25,6 +25,7 @@ function deg2rad(deg) {
 
 function terminales_Function() {
   let x = [];
+  let y = [];
   var ss = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('TERMINALES');
   var ss1 = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('datos');
   var dataRangeAll = ss.getDataRange();
@@ -37,11 +38,13 @@ function terminales_Function() {
     var lon1 = Number(ss1.getRange(2,2).getValue()); //LONG user
     let d = getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2);
     //Logger.log('valor='+d);
-    ss.getRange(i,5).setValue(d);
-    let terminal = 'En '+ss.getRange(i,1).getValue() + ': '+ss.getRange(i,2).getValue();
+    //ss.getRange(i,5).setValue(d);
+    //let terminal = 'En '+ss.getRange(i,1).getValue() + ': '+ss.getRange(i,2).getValue();
+    let terminal = ss.getRange(i,1).getValue();
     //let distancia = ss.getRange(i,5).getValue();
-    //Logger.log(terminal,distancia);
+    //Logger.log(terminal,distancia)
     x.push({terminal,d});
+    //Logger.log(x)
   }
   x.sort(function (a, b) {
   if (a.d > b.d) {
@@ -54,8 +57,17 @@ function terminales_Function() {
   return 0;
 });
     Logger.log(x);
-    Logger.log('Las 3 terminales mas cercanas son: '+x[0].terminal+', '+x[1].terminal+', '+x[2].terminal+';');
-    ss1.getRange(2,3).setValue(x[0].terminal);
-    ss1.getRange(3,3).setValue(x[1].terminal);
-    ss1.getRange(4,3).setValue(x[2].terminal);
+    //array para solo Ciudades
+    for(let j = 0; j< x.length; j++){
+      y.push(x[j].terminal);
+    }
+    //quitar repetidas
+    let result = y.filter((item,index)=>{
+      return y.indexOf(item) === index;
+    })
+    //Logger.log('Las 3 terminales mas cercanas son: '+x[0].terminal+', '+x[1].terminal+', '+x[2].terminal+';'); 
+    Logger.log('Las 3 ciudades mas cercanas son: '+result[0]+', '+result[1]+', '+result[2]+';');
+    ss1.getRange(2,3).setValue(result[0]);
+    ss1.getRange(3,3).setValue(result[1]);
+    ss1.getRange(4,3).setValue(result[2]);
 }
